@@ -21,10 +21,10 @@ To get a local copy up and running,
  git clone https://github.com/oluwabunmi2/vochub.git
  cd vochub
  Install dependencies for both frontend and backend:
- *Navigate to the backend folder and install dependencies*
+ - Navigate to the backend folder and install dependencies
    cd backend
    npm install
- *Navigate to the frontend folder and install dependencies*
+ - Navigate to the frontend folder and install dependencies
    cd ../frontend
    npm install
 

@@ -29,11 +29,11 @@ To get a local copy up and running,
    npm install
 
 # Running the Project
- - Start the Backend Server
+ - Start the Backend Server;
    cd backend
    npm start
 The backend server will be running at http://localhost:5000.
- - Start the Frontend Application
+ - Start the Frontend Application;
    cd frontend
    npm start
 The frontend application will be running at http://localhost:3000.

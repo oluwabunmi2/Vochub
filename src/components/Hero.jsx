@@ -63,14 +63,14 @@ function Hero() {
   </div>
  
 </div>
-<p className='mt-2 text-[#D1EC79] flex items-center gap-2 '><FaRegCheckCircle className='text-black' /> One month free trial, money back guarantee</p>
+<p className='mt-2 text-[#D1EC79] flex items-center gap-2 '><FaRegCheckCircle className='text-black' />Home for all relevant skills.</p>
 <div className=' mt-2 flex items-center flex-row cursor-pointer'>
 <img 
             src="/reviewImg.png" 
             alt="Vocational training hero" 
             className="w-24  object-contain "
           />
-          <p>Here what our customers are saying</p>
+          <p>Vocational Hub, the best place to learn a skill.</p>
 </div>
 
         </div>

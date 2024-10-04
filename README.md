@@ -10,32 +10,32 @@ Content management for course materials (videos, documents).
 Profile management and user dashboards.
 
 # Getting Started
-To get a local copy up and running, follow these simple steps.
-Make sure you have the following installed:
-Node.js
-MongoDB
-Git
+To get a local copy up and running, 
+ Make sure you have the following installed:
+ - Node.js
+ - MongoDB
+ - Git
 
 # Installation
-Clone the repository:
-git clone https://github.com/oluwabunmi2/vochub.git
-cd vochub
-Install dependencies for both frontend and backend:
-*Navigate to the backend folder and install dependencies*
-cd backend
-npm install
-*Navigate to the frontend folder and install dependencies*
-cd ../frontend
-npm install
+ Clone the repository:
+ git clone https://github.com/oluwabunmi2/vochub.git
+ cd vochub
+ Install dependencies for both frontend and backend:
+ *Navigate to the backend folder and install dependencies*
+   cd backend
+   npm install
+ *Navigate to the frontend folder and install dependencies*
+   cd ../frontend
+   npm install
 
 # Running the Project
-*Start the Backend Server*
-cd backend
-npm start
+ *Start the Backend Server*
+ cd backend
+ npm start
 The backend server will be running at http://localhost:5000.
-*Start the Frontend Application*
-cd frontend
-npm start
+ *Start the Frontend Application*
+ cd frontend
+ npm start
 The frontend application will be running at http://localhost:3000.
 
 # Testing

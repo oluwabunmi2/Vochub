@@ -103,7 +103,7 @@ function Header() {
               Français
             </Option>
           </Select>
-          <button className='bg-[#1a1a1a] text-white flex items-center gap-2 px-4 py-2 rounded-full '><FaUser size={21} className='bg-[#D1EC79] p-1 rounded-full text-black'/> Login</button>
+          <Link to='login' className='bg-[#1a1a1a] text-white flex items-center gap-2 px-4 py-2 rounded-full '><FaUser size={21} className='bg-[#D1EC79] p-1 rounded-full text-black'/> Login</Link>
         </div>
         <div className="md:hidden flex items-center space-x-4">
           <Select 
@@ -144,17 +144,7 @@ function Header() {
         <Link to="/contact">
           <a className="block py-2 px-4 text-gray-500 hover:text-gray-700">{t('contact')}</a>
         </Link>
-        <div className="flex space-x-4 mt-4">
-          <a href="https://www.facebook.com/kongnyuy.simeon.3?mibextid=ZbWKwL" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400">
-            <FaFacebook size={20} />
-          </a>
-          <a href="https://www.linkedin.com/in/simeonazeh?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400">
-            <FaLinkedin size={20} />
-          </a>
-          <a href="https://github.com/Simeon-Azeh" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400">
-            <FaGithub size={20} />
-          </a>
-        </div>
+        <button className='bg-[#1a1a1a] text-white flex items-center gap-2 px-4 py-2 rounded-full '><FaUser size={21} className='bg-[#D1EC79] p-1 rounded-full text-black'/> Login</button>
       </Drawer>
     </div>
   );

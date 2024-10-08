@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FaUser, FaLock } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { FcGoogle } from "react-icons/fc";
+import Footer from '../../components/Footer';
 
 function Login() {
   const { t } = useTranslation();
@@ -136,7 +137,11 @@ function Login() {
           </div>
         </form>
       </div>
+     
+  
+
     </div>
+        
   );
 }
 

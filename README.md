@@ -50,9 +50,9 @@ npm test
 - Push the backend code to Heroku: git add .
   git commit -m "Initial Heroku Deployment"
   git push heroku main
-  - Set the environment variables on Heroku: heroku config:set MONGO_URI=<Your 
+- Set the environment variables on Heroku: heroku config:set MONGO_URI=<Your 
   MongoDB Atlas URI>
-  - Open the deployed Heroku app: heroku open
+ - Open the deployed Heroku app: heroku open
 
 # Contributing
 Contributions are welcome! Please fork the repository and create a pull request to contribute. Ensure that you follow the coding standards and include tests for your changes.

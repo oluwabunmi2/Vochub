@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { FiSearch } from "react-icons/fi";
+import { logout } from '../services/apiService'; // Import the logout function
 
 function Navbar() {
   const { t, i18n } = useTranslation();
@@ -18,11 +19,16 @@ function Navbar() {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/login'; // Redirect to login page
+  };
+
   return (
-    <div className="bg-white py-4 px-6 flex justify-between items-center ">
+    <div className="flex items-center justify-between px-6 py-4 bg-white ">
       {/* Left: Search Input */}
-      <div className="flex items-center space-x-2 w-full md:w-auto relative">
-        <FiSearch size={18} className="text-gray-400 absolute ml-4" />
+      <div className="relative flex items-center w-full space-x-2 md:w-auto">
+        <FiSearch size={18} className="absolute ml-4 text-gray-400" />
         <input
           type="text"
           placeholder={t('Search...')}
@@ -31,7 +37,7 @@ function Navbar() {
       </div>
 
       {/* Right: Icons and Profile */}
-      <div className="flex items-center space-x-4 relative ml-4 md:ml-0">
+      <div className="relative flex items-center ml-4 space-x-4 md:ml-0">
         {/* Language Toggle */}
         <button onClick={toggleLanguage} className="flex items-center space-x-2 text-gray-400">
           <MdOutlineLanguage size={20} />
@@ -40,7 +46,7 @@ function Navbar() {
 
         {/* Notification Icon with Badge */}
         <div className="relative">
-          <button className="flex items-center space-x-2 text-gray-400 relative">
+          <button className="relative flex items-center space-x-2 text-gray-400">
             <IoIosNotificationsOutline size={32} />
             {/* Notification Badge */}
             <span className="absolute top-0 right-0 h-4 w-4 bg-[#D1EC79] rounded-full flex items-center justify-center text-xs text-gray-700 font-inter">
@@ -57,7 +63,7 @@ function Navbar() {
             onClick={toggleDropdown}
           />
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md py-2 border">
+            <div className="absolute right-0 w-48 py-2 mt-2 bg-white border rounded-md">
               <Link 
                 to="/profile" 
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
@@ -73,11 +79,8 @@ function Navbar() {
                 {t('Settings')}
               </Link>
               <div 
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
-                onClick={() => {
-                  setIsDropdownOpen(false);
-                  // Add logout functionality if needed
-                }}
+                className="block px-4 py-2 text-gray-700 cursor-pointer hover:bg-gray-100"
+                onClick={handleLogout}
               >
                 {t('Logout')}
               </div>

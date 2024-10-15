@@ -8,8 +8,10 @@ import Home from './pages/Home';
 import Login from './pages/Authentication/Login';
 import Register from './pages/Authentication/Register';
 import ForgotPassword from './pages/Authentication/ForgotPassword';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/dashboard';
 import Courses from './pages/Courses';
+import PrivateRoute from './components/PrivateRoute';
+import AuthRedirect from './components/AuthRedirect';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -34,11 +36,27 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/login"
+          element={
+            <AuthRedirect>
+              <Login />
+            </AuthRedirect>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <AuthRedirect>
+              <Register />
+            </AuthRedirect>
+          }
+        />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="*" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
         <Route path="/courses" element={<Courses />} />
       </Routes>
     </BrowserRouter>

@@ -1,11 +1,15 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaLock, FaEnvelope } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { FcGoogle } from "react-icons/fc";
+import { register } from '../../services/apiService'; // Import the register function
+import Loader from '../../components/Loader/Loader'; // Import the Loader component
 
 function Register() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -13,6 +17,8 @@ function Register() {
     confirmPassword: '',
   });
   const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState('');
+  const [loading, setLoading] = useState(false); // State to manage loading
 
   const validateForm = () => {
     let formErrors = {};
@@ -41,32 +47,56 @@ function Register() {
     return Object.keys(formErrors).length === 0;
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
     if (validateForm()) {
-      console.log(formData);
+      setLoading(true); // Show loader
+      try {
+        const data = await register(
+          formData.username,
+          formData.email,
+          formData.password,
+          formData.confirmPassword
+        );
+
+        if (data.token) {
+          console.log(data, data.token);
+          localStorage.setItem('token', data.token);
+          window.history.replaceState(null, '', '/dashboard');
+          navigate('/dashboard');
+        }
+      } catch (error) {
+        if (error.errors) {
+          setErrors(error.errors);
+        } else {
+          setApiError(error.message || 'Registration failed');
+        }
+      } finally {
+        setLoading(false); // Hide loader
+      }
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f9f9f9] dark:bg-dark-body transition-colors py-12 px-4 sm:px-6 lg:px-8 font-inter">
-      <div className="max-w-md w-full space-y-8 bg-white p-6 rounded-md">
+      {loading && <Loader />} {/* Show loader when loading */}
+      <div className="w-full max-w-md p-6 space-y-8 bg-white rounded-md">
         <div>
-          <h2 className="text-center text-3xl font-semibold dark:text-slate-50 text-gray-900 font-montserrat-alt">
+          <h2 className="text-3xl font-semibold text-center text-gray-900 dark:text-slate-50 font-montserrat-alt">
             {t('Create your account')}
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-sm text-center text-gray-600 dark:text-gray-400">
             {t('Already have an account?')} <Link to="/login" className="font-medium text-[#95b627] hover:text-[#b8d865]">{t('Login')}</Link>
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleRegister}  noValidate>
-          <div className="rounded-md shadow-sm space-y-4">
+        <form className="mt-8 space-y-6" onSubmit={handleRegister} noValidate>
+          <div className="space-y-4 rounded-md shadow-sm">
             <div>
               <label htmlFor="username" className="sr-only">{t('Username')}</label>
               <div className="relative">
-                <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-50" />
+                <FaUser className="absolute z-50 text-gray-500 transform -translate-y-1/2 left-3 top-1/2" />
                 <input
                   id="username"
                   name="username"
@@ -80,13 +110,13 @@ function Register() {
                   placeholder={t('Username')}
                 />
               </div>
-              {errors.username && <p className="text-red-500 text-xs mt-2">{errors.username}</p>}
+              {errors.username && <p className="mt-2 text-xs text-red-500">{errors.username}</p>}
             </div>
 
             <div>
               <label htmlFor="email" className="sr-only">{t('Email address')}</label>
               <div className="relative">
-                <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-50" />
+                <FaEnvelope className="absolute z-50 text-gray-500 transform -translate-y-1/2 left-3 top-1/2" />
                 <input
                   id="email"
                   name="email"
@@ -100,13 +130,13 @@ function Register() {
                   placeholder={t('Email address')}
                 />
               </div>
-              {errors.email && <p className="text-red-500 text-xs mt-2">{errors.email}</p>}
+              {errors.email && <p className="mt-2 text-xs text-red-500">{errors.email}</p>}
             </div>
 
             <div>
               <label htmlFor="password" className="sr-only">{t('Password')}</label>
               <div className="relative">
-                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-50" />
+                <FaLock className="absolute z-50 text-gray-500 transform -translate-y-1/2 left-3 top-1/2" />
                 <input
                   id="password"
                   name="password"
@@ -120,13 +150,13 @@ function Register() {
                   placeholder={t('Password')}
                 />
               </div>
-              {errors.password && <p className="text-red-500 text-xs mt-2">{errors.password}</p>}
+              {errors.password && <p className="mt-2 text-xs text-red-500">{errors.password}</p>}
             </div>
 
             <div>
               <label htmlFor="confirmPassword" className="sr-only">{t('Confirm Password')}</label>
               <div className="relative">
-                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-50" />
+                <FaLock className="absolute z-50 text-gray-500 transform -translate-y-1/2 left-3 top-1/2" />
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -140,9 +170,11 @@ function Register() {
                   placeholder={t('Confirm Password')}
                 />
               </div>
-              {errors.confirmPassword && <p className="text-red-500 text-xs mt-2">{errors.confirmPassword}</p>}
+              {errors.confirmPassword && <p className="mt-2 text-xs text-red-500">{errors.confirmPassword}</p>}
             </div>
           </div>
+
+          {apiError && <p className="mt-2 text-xs text-red-500">{apiError}</p>}
 
           <div>
             <button
@@ -151,13 +183,13 @@ function Register() {
             >
               {t('Register')}
             </button>
-            <button
-              type="submit"
-              className="text-black flex items-center w-full border text-center rounded justify-center py-2 font-medium gap-2 mt-4"
+            <span
+              onClick={() => {alert("Clicked")}}
+              className="flex items-center justify-center w-full gap-2 py-2 mt-2 font-medium text-center text-black border rounded cursor-pointer"
             >
                 <FcGoogle size={24} />
               {t('Continue with Google')}
-            </button>
+            </span>
           </div>
         </form>
       </div>

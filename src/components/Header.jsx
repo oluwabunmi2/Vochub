@@ -48,9 +48,11 @@ function Header() {
     setDarkMode(!darkMode);
   };
 
+  const isAuthenticated = !!localStorage.getItem('token');
+
   return (
-    <div className="bg-light-body dark:bg-dark-body transition-colors">
-      <div className='flex justify-between w-full md:w-4/5 mx-auto items-center py-4 px-6 md:px-0 font-inter sticky top-0 z-50'>
+    <div className="transition-colors bg-light-body dark:bg-dark-body">
+      <div className='sticky top-0 z-50 flex items-center justify-between w-full px-6 py-4 mx-auto md:w-4/5 md:px-0 font-inter'>
         <div className="text-lg font-semibold">
           <Link to="/">
             <h1 className='font-montserrat-alt text-[#] dark:text-slate-50 text-light-text'>
@@ -85,12 +87,12 @@ function Header() {
             <a className="hover:border-b-2 border-[#D1EC79] dark:border-gray-400 dark:border-solid">{t('contact')}</a>
           </Link>
         </div>
-        <div className="hidden md:flex items-center space-x-4">
+        <div className="items-center hidden space-x-4 md:flex">
           {/* Ant Design Select for Language Change */}
           <Select 
             defaultValue={i18n.language} 
             onChange={handleLanguageChange} 
-            className="text-white dark:text-white custom-select font-Inter font-semibold"
+            className="font-semibold text-white dark:text-white custom-select font-Inter"
             dropdownClassName="bg-white dark:bg-gray-800 text-gray-800 dark:text-white"
             style={{ color: "white", width: 100 }}
           >
@@ -103,9 +105,17 @@ function Header() {
               Français
             </Option>
           </Select>
-          <Link to='login' className='bg-[#1a1a1a] text-white flex items-center gap-2 px-4 py-2 rounded-full '><FaUser size={21} className='bg-[#D1EC79] p-1 rounded-full text-black'/> Login</Link>
+          {isAuthenticated ? (
+            <Link to='/dashboard' className='bg-[#1a1a1a] text-white flex items-center gap-2 px-4 py-2 rounded-full '>
+              <FaUser size={21} className='bg-[#D1EC79] p-1 rounded-full text-black'/> Dashboard
+            </Link>
+          ) : (
+            <Link to='/login' className='bg-[#1a1a1a] text-white flex items-center gap-2 px-4 py-2 rounded-full '>
+              <FaUser size={21} className='bg-[#D1EC79] p-1 rounded-full text-black'/> Login
+            </Link>
+          )}
         </div>
-        <div className="md:hidden flex items-center space-x-4">
+        <div className="flex items-center space-x-4 md:hidden">
           <Select 
             defaultValue={i18n.language} 
             onChange={handleLanguageChange} 
@@ -130,21 +140,29 @@ function Header() {
 
       <Drawer title={t('menu')} placement="right" onClose={onClose} visible={visible} className='bg-[#f7f7f7] font-inter font-medium'>
         <Link to="/">
-          <a className="block py-2 px-4 text-gray-500 hover:text-gray-700">{t('home')}</a>
+          <a className="block px-4 py-2 text-gray-500 hover:text-gray-700">{t('home')}</a>
         </Link>
         <Link to="/resume">
-          <a className="block py-2 px-4 text-gray-500 hover:text-gray-700">{t('resume')}</a>
+          <a className="block px-4 py-2 text-gray-500 hover:text-gray-700">{t('resume')}</a>
         </Link>
         <Link to="/services">
-          <a className="block py-2 px-4 text-gray-500 hover:text-gray-700">{t('services')}</a>
+          <a className="block px-4 py-2 text-gray-500 hover:text-gray-700">{t('services')}</a>
         </Link>
         <Link to="/portfolio">
-          <a className="block py-2 px-4 text-gray-500 hover:text-gray-700">{t('portfolio')}</a>
+          <a className="block px-4 py-2 text-gray-500 hover:text-gray-700">{t('portfolio')}</a>
         </Link>
         <Link to="/contact">
-          <a className="block py-2 px-4 text-gray-500 hover:text-gray-700">{t('contact')}</a>
+          <a className="block px-4 py-2 text-gray-500 hover:text-gray-700">{t('contact')}</a>
         </Link>
-        <button className='bg-[#1a1a1a] text-white flex items-center gap-2 px-4 py-2 rounded-full '><FaUser size={21} className='bg-[#D1EC79] p-1 rounded-full text-black'/> Login</button>
+        {isAuthenticated ? (
+          <Link to='/dashboard' className='bg-[#1a1a1a] text-white flex items-center gap-2 px-4 py-2 rounded-full '>
+            <FaUser size={21} className='bg-[#D1EC79] p-1 rounded-full text-black'/> Dashboard
+          </Link>
+        ) : (
+          <Link to='/login' className='bg-[#1a1a1a] text-white flex items-center gap-2 px-4 py-2 rounded-full '>
+            <FaUser size={21} className='bg-[#D1EC79] p-1 rounded-full text-black'/> Login
+          </Link>
+        )}
       </Drawer>
     </div>
   );

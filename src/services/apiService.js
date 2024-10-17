@@ -43,3 +43,16 @@ export const forgotPassword = async (email) => {
       }
     }
 };
+
+export const googleAuth = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/auth`);
+      window.location.href = response.data.url;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        throw new Error(error.response.data.message || 'Some error occurred');
+      } else {
+        throw new Error('An error occurred');
+      }
+    }
+};

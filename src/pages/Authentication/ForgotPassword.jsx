@@ -77,7 +77,7 @@ function ForgotPassword() {
                 />
                 
               </div>
-              {errors.api && <p className="text-red-500">{errors.api}</p>}
+              {errors.api && <p className="text-red-500 text-sm my-1">{errors.api}</p>}
               {errors.email && <p className="mt-2 text-xs text-red-500">{errors.email}</p>}
             </div>
           </div>

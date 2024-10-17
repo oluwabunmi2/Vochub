@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaLock, FaEnvelope } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { FcGoogle } from "react-icons/fc";
-import { register } from '../../services/apiService'; // Import the register function
+import { register, googleAuth } from '../../services/apiService'; // Import the register and googleAuth functions
 import Loader from '../../components/Loader/Loader'; // Import the Loader component
 
 function Register() {
@@ -75,6 +75,16 @@ function Register() {
       } finally {
         setLoading(false); // Hide loader
       }
+    }
+  };
+
+  const handleGoogleAuth = async () => {
+    setLoading(true); // Show loader
+    try {
+      await googleAuth();
+    } catch (error) {
+      setApiError(error.message || 'Google authentication failed');
+      setLoading(false); // Hide loader
     }
   };
 
@@ -184,7 +194,7 @@ function Register() {
               {t('Register')}
             </button>
             <span
-              onClick={() => {alert("Clicked")}}
+              onClick={handleGoogleAuth}
               className="flex items-center justify-center w-full gap-2 py-2 mt-2 font-medium text-center text-black border rounded cursor-pointer"
             >
                 <FcGoogle size={24} />

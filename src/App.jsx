@@ -12,6 +12,7 @@ import Dashboard from './pages/dashboard';
 import Courses from './pages/Courses';
 import PrivateRoute from './components/PrivateRoute';
 import AuthRedirect from './components/AuthRedirect';
+import GoogleCallback from './components/GoogleCallback';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -52,6 +53,7 @@ function App() {
             </AuthRedirect>
           }
         />
+        <Route path="/auth/callback" element={<GoogleCallback />} /> {/* Handle Google callback */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="*" element={<Home />} />
         <Route path="/dashboard" element={<PrivateRoute />}>

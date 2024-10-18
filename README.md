@@ -43,16 +43,7 @@ cd backend
 npm test
 
 # Deployment Plan
-- Log in to Heroku:  heroku login
-- Create a new Heroku app: heroku create voc-hub
-- Navigate to the backend directory and initialize it as a Heroku project: git init
- heroku git:remote -a voc-hub
-- Push the backend code to Heroku: git add .
-  git commit -m "Initial Heroku Deployment"
-  git push heroku main
-- Set the environment variables on Heroku: heroku config:set MONGO_URI=<Your 
-  MongoDB Atlas URI>
- - Open the deployed Heroku app: heroku open
+my frontend is deployed on Vercel while my backend will be deployed on Heroku
 
 # Contributing
 Contributions are welcome! Please fork the repository and create a pull request to contribute. Ensure that you follow the coding standards and include tests for your changes.

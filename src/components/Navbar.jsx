@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { MdOutlineLanguage } from 'react-icons/md';
+import { IoIosNotificationsOutline } from "react-icons/io";
+import { FiSearch, FiMenu, FiX } from "react-icons/fi"; // Import menu and close icons
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { IoIosNotificationsOutline } from "react-icons/io";
-import { FiSearch } from "react-icons/fi";
 import { logout } from '../services/apiService'; // Import the logout function
 
 function Navbar() {
   const { t, i18n } = useTranslation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDrawerOpen, setDrawerOpen] = useState(false); // For drawer menu
 
   const toggleLanguage = () => {
     i18n.changeLanguage(i18n.language === 'en' ? 'fr' : 'en');
@@ -24,10 +25,49 @@ function Navbar() {
     window.location.href = '/login'; // Redirect to login page
   };
 
+  const toggleDrawer = () => {
+    setDrawerOpen(!isDrawerOpen);
+  };
+
   return (
-    <div className="flex items-center justify-between px-6 py-4 bg-white ">
-      {/* Left: Search Input */}
-      <div className="relative flex items-center w-full space-x-2 md:w-auto">
+    <div className="flex items-center justify-between px-6 py-4 bg-white top-0 sticky z-50">
+      {/* Left: Hamburger menu (only on smaller screens) */}
+      <div className="lg:hidden">
+        <button onClick={toggleDrawer} className="text-gray-700 focus:outline-none">
+          {isDrawerOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        </button>
+      </div>
+
+      {/* Drawer Menu */}
+      {isDrawerOpen && (
+        <div className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden" onClick={toggleDrawer}>
+          <div
+            className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-50"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-4">
+              <h2 className="text-lg font-bold text-gray-800">{t('Menu')}</h2>
+              <nav className="mt-4 space-y-2">
+                <Link to="/dashboard" className="block text-gray-700 hover:bg-gray-100 p-2 rounded" onClick={toggleDrawer}>
+                  {t('Dashboard')}
+                </Link>
+                <Link to="/courses" className="block text-gray-700 hover:bg-gray-100 p-2 rounded" onClick={toggleDrawer}>
+                  {t('Courses')}
+                </Link>
+                <Link to="/jobs" className="block text-gray-700 hover:bg-gray-100 p-2 rounded" onClick={toggleDrawer}>
+                  {t('Jobs')}
+                </Link>
+                <Link to="/settings" className="block text-gray-700 hover:bg-gray-100 p-2 rounded" onClick={toggleDrawer}>
+                  {t('Settings')}
+                </Link>
+              </nav>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Search Input */}
+      <div className="relative flex items-center w-full space-x-2 md:w-auto lg:ml-4">
         <FiSearch size={18} className="absolute ml-4 text-gray-400" />
         <input
           type="text"

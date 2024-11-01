@@ -45,7 +45,7 @@ npm test
 # Deployment Plan
 my frontend is deployed on Vercel while my backend will be deployed on Heroku
 Link to deployed version of the app https://vochub.vercel.app/
-Link to Demo of the app https://drive.google.com/drive/folders/1-B8HY4Vfv6pQ5kgGIbyOWHVcOs4bWj5U
+Link to Demo of the app https://drive.google.com/drive/folders/1-B8HY4Vfv6pQ5kgGIbyOWHVcOs4bWj5U 
 # Contributing
 Contributions are welcome! Please fork the repository and create a pull request to contribute. Ensure that you follow the coding standards and include tests for your changes.
 

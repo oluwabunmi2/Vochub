@@ -28,14 +28,14 @@ function Dashboard() {
       {/* Overlay for sidebar on smaller screens */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black opacity-50 z-30 lg:hidden"
+          className="fixed inset-0 z-30 bg-black opacity-50 lg:hidden"
           onClick={toggleSidebar}
         ></div>
       )}
 
       {/* Main Content */}
       <div className="flex-1 lg:ml-[200px]">
-        <div className="top-0 sticky z-50">
+        <div className="sticky top-0 z-50">
           <Navbar toggleSidebar={toggleSidebar} />
         </div>
 
@@ -45,7 +45,7 @@ function Dashboard() {
           </div>
 
           {/* Dashboard Components */}
-          <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 mt-6 lg:grid-cols-2">
             <RecentActivities />
             <JobRecommendations />
             <CourseProgress />

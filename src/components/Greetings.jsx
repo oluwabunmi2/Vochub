@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 const Greeting = () => {
   const [greeting, setGreeting] = useState('Hello');
 
+  const user = JSON.parse(localStorage.getItem('user'));
   // Function to get the appropriate greeting based on local time
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -32,7 +33,7 @@ const Greeting = () => {
   return (
     <div>
       <h1 className="text-2xl font-semibold text-gray-800 font-inter">
-        {greeting}! <span className="text-[#8cd836]">Junior</span>
+        {greeting}! <span className="text-[#8cd836]">{user?.name}</span>
       </h1>
      
       <button className="mt-2 bg-[#8cd836] text-white p-2 rounded shadow-md font-inter">

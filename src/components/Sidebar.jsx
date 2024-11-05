@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // useNavigate replaces useHistory
 import { FaHome, FaUserGraduate, FaBook, FaCog, FaBars, FaBriefcase, FaSignOutAlt } from 'react-icons/fa';
 import { RiMenuFold4Line } from "react-icons/ri";
+import { logout } from '../services/apiService'; 
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,7 +14,8 @@ function Sidebar() {
 
   const handleLogout = () => {
     // Add any logout logic if necessary (e.g., clearing tokens)
-    navigate('/login'); // Redirect to login page
+    logout();
+    navigate('/'); // Redirect to the home page
   };
 
   return (
@@ -21,7 +23,7 @@ function Sidebar() {
       {/* Toggle Button for Mobile */}
       <button 
         onClick={toggleSidebar} 
-        className="block lg:hidden p-4 text-white bg-white"
+        className="block p-4 text-white bg-white lg:hidden"
       >
         <RiMenuFold4Line size={34} className='text-gray-700' />
       </button>

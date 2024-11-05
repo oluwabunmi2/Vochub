@@ -22,7 +22,7 @@ function Navbar() {
 
   const handleLogout = () => {
     logout();
-    window.location.href = '/login'; // Redirect to login page
+    window.location.href = '/'; // Redirect to the home page
   };
 
   const toggleDrawer = () => {
@@ -30,7 +30,7 @@ function Navbar() {
   };
 
   return (
-    <div className="flex items-center justify-between px-6 py-4 bg-white top-0 sticky z-50">
+    <div className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-white">
       {/* Left: Hamburger menu (only on smaller screens) */}
       <div className="lg:hidden">
         <button onClick={toggleDrawer} className="text-gray-700 focus:outline-none">
@@ -42,22 +42,22 @@ function Navbar() {
       {isDrawerOpen && (
         <div className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden" onClick={toggleDrawer}>
           <div
-            className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-50"
+            className="fixed top-0 left-0 z-50 w-64 h-full bg-white shadow-lg"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-4">
               <h2 className="text-lg font-bold text-gray-800">{t('Menu')}</h2>
               <nav className="mt-4 space-y-2">
-                <Link to="/dashboard" className="block text-gray-700 hover:bg-gray-100 p-2 rounded" onClick={toggleDrawer}>
+                <Link to="/dashboard" className="block p-2 text-gray-700 rounded hover:bg-gray-100" onClick={toggleDrawer}>
                   {t('Dashboard')}
                 </Link>
-                <Link to="/courses" className="block text-gray-700 hover:bg-gray-100 p-2 rounded" onClick={toggleDrawer}>
+                <Link to="/courses" className="block p-2 text-gray-700 rounded hover:bg-gray-100" onClick={toggleDrawer}>
                   {t('Courses')}
                 </Link>
-                <Link to="/jobs" className="block text-gray-700 hover:bg-gray-100 p-2 rounded" onClick={toggleDrawer}>
+                <Link to="/jobs" className="block p-2 text-gray-700 rounded hover:bg-gray-100" onClick={toggleDrawer}>
                   {t('Jobs')}
                 </Link>
-                <Link to="/settings" className="block text-gray-700 hover:bg-gray-100 p-2 rounded" onClick={toggleDrawer}>
+                <Link to="/settings" className="block p-2 text-gray-700 rounded hover:bg-gray-100" onClick={toggleDrawer}>
                   {t('Settings')}
                 </Link>
               </nav>
@@ -86,13 +86,13 @@ function Navbar() {
 
         {/* Notification Icon with Badge */}
         <div className="relative">
-          <button className="relative flex items-center space-x-2 text-gray-400">
+          <Link to='/notifications' className="relative flex items-center space-x-2 text-gray-400">
             <IoIosNotificationsOutline size={32} />
             {/* Notification Badge */}
             <span className="absolute top-0 right-0 h-4 w-4 bg-[#D1EC79] rounded-full flex items-center justify-center text-xs text-gray-700 font-inter">
               3
             </span>
-          </button>
+          </Link>
         </div>
 
         {/* Profile Picture with Dropdown */}

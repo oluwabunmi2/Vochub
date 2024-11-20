@@ -1,19 +1,35 @@
-import React, { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { GoArrowLeft } from "react-icons/go";
-import SuccessModal from '../components/SuccessModal';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 function JobApplicationForm() {
-  const user = JSON.parse(localStorage.getItem('user'));
   const { jobId } = useParams();
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    fullName: user.name,
-    email: user.email,
+    fullName: '',
+    email: '',
     resume: null,
     linkedin: ''
   });
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user) {
+        setUsername(user.email); // Use email as username
+        setName(user.displayName || user.email); // Use displayName or email as name
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,15 +39,42 @@ function JobApplicationForm() {
     setFormData({ ...formData, resume: e.target.files[0] });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Job applied:', formData);
-    // Handle form submission (e.g., send data to API)
-    setModalVisible(true);
-    setTimeout(() => {
-      setModalVisible(false);
-      navigate('/dashboard');
-    }, 5000);
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const db = getFirestore();
+      await addDoc(collection(db, 'applications'), {
+        jobId,
+        fullName: formData.fullName,
+        email: formData.email,
+        resume: formData.resume.name, // Assuming you handle file upload separately
+        linkedin: formData.linkedin,
+        appliedAt: new Date(),
+        username,
+        name
+      });
+
+      // Add activity to the activities collection
+      await addDoc(collection(db, 'activities'), {
+        type: 'job',
+        activity: `Applied for job ID: ${jobId}`,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        link: `/jobs/${jobId}`,
+        username,
+        name
+      });
+
+      setSuccess('Application submitted successfully.');
+    } catch (err) {
+      setError('Failed to submit application. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -87,19 +130,13 @@ function JobApplicationForm() {
         <button 
           type="submit" 
           className="w-full bg-[#8cd836] text-white p-2 rounded font-semibold"
+          disabled={loading}
         >
-          Submit Application
+          {loading ? 'Submitting...' : 'Submit Application'}
         </button>
+        {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
+        {success && <p className="mt-2 text-xs text-green-500">{success}</p>}
       </form>
-      <SuccessModal 
-        isVisible={isModalVisible} 
-        onClose={() => {
-          setModalVisible(false);
-          navigate('/dashboard');
-        }} 
-        title="Application Submitted" 
-        message="You have successfully applied for the job. We will get back to you soon!" 
-      />
     </div>
   );
 }

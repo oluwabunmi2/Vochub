@@ -5,7 +5,7 @@ import { IoIosNotificationsOutline } from "react-icons/io";
 import { FiSearch, FiMenu, FiX } from "react-icons/fi"; // Import menu and close icons
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { logout } from '../services/apiService'; // Import the logout function
+
 
 function Navbar() {
   const { t, i18n } = useTranslation();
@@ -22,7 +22,7 @@ function Navbar() {
 
   const handleLogout = () => {
     logout();
-    window.location.href = '/'; // Redirect to the home page
+    window.location.href = '/login'; // Redirect to login page
   };
 
   const toggleDrawer = () => {

@@ -3,24 +3,24 @@ import React from 'react';
 const jobRecommendations = [
   {
     id: 1,
-    title: 'Electrician',
-    description: 'Responsible for installing and maintaining electrical systems.',
-    image: 'https://img.freepik.com/free-photo/worker-putting-back-together-hvac-system_482257-80058.jpg?t=st=1729488736~exp=1729492336~hmac=4a2229192a262322ad47408358e16c69fd1e21fac3d66d04b992861bc6ded1ee&w=360', // Replace with actual image URL
-    link: '/jobs/electrician',
+    title: 'Web Designer',
+    description: 'Responsible for designing, creating, and maintaining visually appealing and user-friendly websites, ensuring optimal functionality, responsiveness, and performance..',
+    image: 'https://img.freepik.com/free-photo/close-up-image-programer-working-his-desk-office_1098-18707.jpg?t=st=1732140119~exp=1732143719~hmac=315846bc9f220ce59551dd70cb5e45522207e72bf2e08c1138106191219459e4&w=900', // Replace with actual image URL
+    link: '/jobs/web designer',
   },
   {
     id: 2,
-    title: 'Carpenter',
-    description: 'Skilled in woodwork, building structures, and furniture.',
-    image: 'https://img.freepik.com/free-photo/medium-shot-man-working-with-hand-saw_23-2148931063.jpg?t=st=1729488789~exp=1729492389~hmac=9047715bd09c64dcfd7f523e594379d2fa65cad5d2767712a09112ce3f93d571&w=360', // Replace with actual image URL
-    link: '/jobs/carpenter',
+    title: 'Professional Stylist',
+    description: 'Skilled in fabric selection, garment construction, and creating custom, stylish clothing designs.',
+    image: 'https://img.freepik.com/free-photo/clothesshop-worker-fastening-formal-jacket-buttons-mannequin_482257-87895.jpg?t=st=1732140442~exp=1732144042~hmac=61485a2d6308cad351c3428fa07ffc4f52221d4e412ad2aa59f97dfcf16387cd&w=360', // Replace with actual image URL
+    link: '/jobs/stylist',
   },
   {
     id: 3,
-    title: 'Welder',
+    title: 'Graphic Designer',
     description: 'Specialized in welding metal parts together for various applications.',
-    image: 'https://img.freepik.com/free-photo/carpenter-cutting-mdf-board-inside-workshop_23-2149451099.jpg?t=st=1729488827~exp=1729492427~hmac=1f00ddc155fa6cda0d2d64ff79ff6243ff3a9b43390f822cd1972944a98f67f5&w=740', // Replace with actual image URL
-    link: '/jobs/welder',
+    image: 'https://img.freepik.com/free-photo/professional-heavy-industry-team-engineers-working-computer_482257-19431.jpg?t=st=1732140646~exp=1732144246~hmac=6139cf9dbdc999f96c783556674c1fce96463d1b62f23ec4d35a84394e48d845&w=360', // Replace with actual image URL
+    link: '/jobs/Graphic designer',
   },
 ];
 

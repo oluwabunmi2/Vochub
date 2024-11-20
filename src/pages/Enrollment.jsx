@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, Link } from 'react-router-dom';
 import { GoArrowLeft } from "react-icons/go";
-import SuccessModal from '../components/SuccessModal';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 const Enrollment = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
 
   // Destructure with default values to prevent undefined errors
   const { 
@@ -20,12 +24,57 @@ const Enrollment = () => {
     learningOutcomes = [] // Provide a default empty array
   } = location.state || {}; // Ensure location.state is defined
 
-  const handleEnroll = () => {
-    setModalVisible(true);
-    setTimeout(() => {
-      setModalVisible(false);
-      navigate('/dashboard');
-    }, 5000);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user) {
+        setUsername(user.email); // Use email as username
+        setName(user.displayName || user.email); // Use displayName or email as name
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const handleEnroll = async () => {
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const db = getFirestore();
+      await addDoc(collection(db, 'enrollment'), {
+        username,
+        name,
+        image,
+        title,
+        category,
+        enrollments,
+        authorImg,
+        authorName,
+        description,
+        learningOutcomes,
+        enrolledAt: new Date()
+      });
+
+      // Add activity to the activities collection
+      await addDoc(collection(db, 'activities'), {
+        type: 'course',
+        activity: `Enrolled in course: ${title}`,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        link: `/courses/${title}`,
+        username,
+        name
+      });
+
+      setSuccess('Enrolled successfully.');
+    } catch (err) {
+      setError('Failed to enroll. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -71,19 +120,13 @@ const Enrollment = () => {
         <button 
           className="mt-6 bg-[#8cd836] text-white px-6 py-2 rounded-lg shadow hover:bg-[#001a4d]"
           onClick={handleEnroll}
+          disabled={loading}
         >
-          Enroll Now
+          {loading ? 'Enrolling...' : 'Enroll Now'}
         </button>
+        {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
+        {success && <p className="mt-2 text-xs text-green-500">{success}</p>}
       </div>
-      <SuccessModal 
-        isVisible={isModalVisible} 
-        onClose={() => {
-          setModalVisible(false);
-          navigate('/dashboard');
-        }} 
-        title="Enrollment Successful" 
-        message="You have successfully enrolled in the course. You will be redirected to the dashboard shortly." 
-      />
     </div>
   );
 }

@@ -6,12 +6,12 @@ const Certifications = () => {
     { 
       title: 'Certified Tailor', 
       date: 'Oct 15, 2024',
-      file: 'certified-welder.pdf' // Mock file name for download
+      file: 'certified-tailor.pdf' // Mock file name for download
     },
     { 
-      title: 'Resin Craft Level 1', 
+      title: 'Graphic Design Basics', 
       date: 'Sep 10, 2024',
-      file: 'plumbing-level-1.pdf' // Mock file name for download
+      file: 'Graphic design basics.pdf' // Mock file name for download
     },
   ];
 

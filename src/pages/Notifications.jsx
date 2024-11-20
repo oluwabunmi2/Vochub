@@ -7,7 +7,7 @@ import { FaCheckCircle, FaTrashAlt, FaBellSlash } from 'react-icons/fa';
 const Notifications = () => {
   const [notifications, setNotifications] = useState([
     { id: 1, text: 'You have a new message from Jane.', isRead: false, details: 'Message details from Jane', actionRequired: false },
-    { id: 2, text: 'Your course "Plumbing Basics" has been updated.', isRead: false, details: 'The course has new sections on advanced plumbing techniques.', actionRequired: true },
+    { id: 2, text: 'Your course "UI/UX Design" has been updated.', isRead: false, details: 'The course has new sections on advanced plumbing techniques.', actionRequired: true },
     { id: 3, text: 'You have been assigned a new project.', isRead: true, details: 'Project description and deadlines for the new project.', actionRequired: true },
   ]);
 

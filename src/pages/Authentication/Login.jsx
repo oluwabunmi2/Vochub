@@ -1,162 +1,159 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaUser, FaLock } from 'react-icons/fa';
-import { useTranslation } from 'react-i18next';
-import { FcGoogle } from "react-icons/fc";
-import Footer from '../../components/Footer';
-import { login } from '../../services/apiService'; // Import the login function
-import Loader from '../../components/Loader/Loader'; // Import the Loader component
+import { FcGoogle } from 'react-icons/fc';
+import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../../firebase/auth.js';
+import { useAuth } from '../../context/authContext';
+import { IoAlertCircleOutline } from "react-icons/io5";
 
-function Login() {
-  const { t } = useTranslation();
+const Login = () => {
+  const { userLoggedIn } = useAuth();
   const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
-  const [apiError, setApiError] = useState('');
-  const [loading, setLoading] = useState(false); // State to manage loading
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const validateForm = () => {
-    let formErrors = {};
+    const newErrors = {};
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     
-    // Email validation
-    if (!email) {
-      formErrors.email = t('Email is required');
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      formErrors.email = t('Email is invalid');
+    if (!email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!emailPattern.test(email)) {
+      newErrors.email = 'Please enter a valid email';
     }
 
-    // Password validation
-    if (!password) {
-      formErrors.password = t('Password is required');
-    } else if (password.length < 6) {
-      formErrors.password = t('Password must be at least 6 characters long');
+    if (!password.trim()) {
+      newErrors.password = 'Password is required';
+    } else if (password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters long';
     }
 
-    setErrors(formErrors);
-    return Object.keys(formErrors).length === 0;
+    return newErrors;
   };
 
-  const handleLogin = async (e) => {
+  const getCustomErrorMessage = (errorCode) => {
+    switch (errorCode) {
+      case 'auth/invalid-email':
+        return 'Please enter a valid email address.';
+      case 'auth/user-disabled':
+        return 'This user has been disabled. Please contact support.';
+      case 'auth/user-not-found':
+        return 'No user found with this email. Please sign up first.';
+      case 'auth/wrong-password':
+        return 'Incorrect password. Please try again.';
+      case 'auth/too-many-requests':
+        return 'Too many attempts. Please try again later.';
+      case 'auth/invalid-credential': // Handle invalid credential error
+        return 'Invalid credentials. Please check your email and password.';
+      default:
+        return 'An unknown error occurred. Please try again later.';
+    }
+  };
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (validateForm()) {
-      setLoading(true); // Show loader
+    const formErrors = validateForm();
+    setErrors(formErrors);
+  
+    if (Object.keys(formErrors).length === 0 && !isSigningIn) {
+      setIsSigningIn(true);
       try {
-        const data = await login(email, password);
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-          navigate('/dashboard'); // Redirect to dashboard
-        }
+        await doSignInWithEmailAndPassword(email, password);
+        navigate('/dashboard');
       } catch (error) {
-        setApiError(error.error || 'Invalid Credentials');
+        console.error('Error during sign-in:', error); // Log the full error to inspect its structure
+        setErrorMessage(getCustomErrorMessage(error.code || 'default')); // Use 'default' if error.code is not available
       } finally {
-        setLoading(false); // Hide loader
+        setIsSigningIn(false);
       }
     }
   };
+  
+  const onGoogleSignIn = async (e) => {
+    e.preventDefault();
+    if (!isSigningIn) {
+      setIsSigningIn(true);
+      try {
+        await doSignInWithGoogle();
+        navigate('/dashboard');
+      } catch (error) {
+        console.error('Error during Google sign-in:', error); // Log the full error to inspect its structure
+        setErrorMessage(getCustomErrorMessage(error.code || 'default')); // Use 'default' if error.code is not available
+      } finally {
+        setIsSigningIn(false);
+      }
+    }
+  };
+  
+  // Use useEffect to navigate if the user is already logged in
+  useEffect(() => {
+    if (userLoggedIn) {
+      navigate('/dashboard');
+    }
+  }, [userLoggedIn, navigate]); // This effect runs whenever userLoggedIn changes
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f9f9f9f9] dark:bg-dark-body transition-colors py-12 px-4 sm:px-6 lg:px-8 font-inter">
-      {loading && <Loader />} {/* Show loader when loading */}
-      <div className="w-full max-w-md p-6 space-y-8 bg-white rounded-md">
-        <div>
-          <h2 className="mt-6 text-3xl font-semibold text-center text-gray-900 dark:text-slate-50 font-montserrat-alt">
-            {t('Login to your account')}
-          </h2>
-          <p className="mt-2 text-sm text-center text-gray-600 dark:text-gray-400">
-            {t("Or")} <Link to="/register" className="font-medium text-[#95b627] hover:text-[#b8d865]">{t('create a new account')}</Link>
-          </p>
-        </div>
-
-        <form className="mt-8 space-y-6 font-inter" onSubmit={handleLogin} noValidate>
-          <div className="rounded-md shadow-sm ">
+    <div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="bg-white p-8 rounded-lg w-full max-w-xl">
+          <h2 className="text-3xl font-semibold text-center text-gray-800 mb-2">Sign In</h2>
+          <p className="text-gray-400 mb-4 text-center">Welcome back, sign into your account</p>
+          {errorMessage && <p className="bg-red-500 text-md text-center mb-5 text-white p-2 rounded flex items-center gap-2 justify-center"> <IoAlertCircleOutline /> {errorMessage}</p>}
+          <button
+            type="button"
+            className="flex items-center justify-center px-4 py-3 bg-[#fff] text-[#002266] border gap-2 rounded-full font-medium hover:bg-[#002266] hover:text-white mx-auto transition mb-4"
+            onClick={onGoogleSignIn}
+          >
+            <FcGoogle size={24} />
+            Continue with Google
+          </button>
+          <p className="text-sm font-medium text-center m-4 text-gray-400">Or</p>
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="email" className="sr-only">{t('Email address')}</label>
-              <div className="relative">
-                <FaUser className="absolute z-50 text-gray-500 transform -translate-y-1/2 left-3 top-1/2" />
-                <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className={`appearance-none rounded-md relative block w-full px-10 py-3 border ${
-                        errors.email ? 'border-red-500' : 'border-gray-300 border-solid'
-                    } placeholder-gray-600 dark:placeholder-gray-400 text-gray-900 dark:text-gray-200 bg-white dark:bg-[#222222] focus:outline-none focus:ring-[#D1EC79] focus:border-[#D1EC79] sm:text-sm`}
-                    placeholder={t('Email address')}
-                />
-
-              </div>
-              {errors.email && <p className="mt-2 text-xs text-red-500">{errors.email}</p>}
-              {apiError && <p className="mt-2 text-xs text-red-500">{apiError}</p>}
-            </div>
-
-            <div className="mt-2">
-              <label htmlFor="password" className="sr-only">{t('Password')}</label>
-              <div className="relative">
-                <FaLock className="absolute z-50 text-gray-500 transform -translate-y-1/2 left-3 top-1/2" />
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={`appearance-none rounded-md relative block w-full px-10 py-3 border ${
-                    errors.email ? 'border-red-500' : 'border-gray-300 border-solid'
-                } placeholder-gray-600 dark:placeholder-gray-400 text-gray-900 dark:text-gray-200 bg-white dark:bg-[#222222] focus:outline-none focus:ring-[#D1EC79] focus:border-[#D1EC79] sm:text-sm`}
-                placeholder={t('Password')}
-                />
-              </div>
-              {errors.password && <p className="mt-2 text-xs text-red-500">{errors.password}</p>}
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
               <input
-                id="remember_me"
-                name="remember_me"
-                type="checkbox"
-                className="h-4 w-4 text-[#D1EC79] border-gray-300 rounded focus:ring-[#D1EC79] dark:bg-[#222222]"
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-2 block w-full p-3 border border-gray-300  focus:outline-none focus:border-[#002266] rounded-md bg-transparent"
+                placeholder="example@gmail.com"
               />
-              <label htmlFor="remember_me" className="block ml-2 text-sm text-gray-900 dark:text-gray-400">
-                {t('Remember me')}
-              </label>
+              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
             </div>
-
-            <div className="text-sm">
-              <Link to="/forgot-password" className="font-medium text-[#D1EC79] hover:text-[#b8d865]">
-                {t('Forgot your password?')}
-              </Link>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-2 block w-full p-3 border border-gray-300  focus:outline-none focus:border-[#002266] rounded-md bg-transparent"
+                placeholder="Enter your password"
+              />
+              {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
             </div>
-          </div>
-
-          <div>
+            <Link to="/forgot-password" className="text-right text-sm text-[#002266] font-semibold mt-4 flex justify-end">
+              Forgot Password?
+            </Link>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-6 border border-transparent text-sm font-medium rounded-md text-white bg-[#D1EC79] hover:bg-[#b8d865] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D1EC79] mb-4"
+              className="w-full py-3 bg-[#95b627] text-white font-semibold rounded-full hover:bg-[#001b4f] transition"
+              disabled={isSigningIn}
             >
-              {t('Login')}
+              {isSigningIn ? 'Signing In...' : 'Sign In'}
             </button>
-                  
-            <span
-              onClick={() => {alert("Clicked")}}
-              className="flex items-center justify-center w-full gap-2 py-2 mt-2 font-medium text-center text-black border rounded cursor-pointer"
-            >
-                <FcGoogle size={24} />
-              {t('Continue with Google')}
-            </span>
-          </div>
-        </form>
+          </form>
+          <p className="text-center text-gray-600 mt-6">
+            Don't have an account? <Link to="/register" className="text-[#002266] font-medium">Sign Up</Link>
+          </p>
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default Login;

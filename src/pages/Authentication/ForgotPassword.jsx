@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaEnvelope } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
-import { forgotPassword } from '../../services/apiService'; // Import the forgotPassword function
+import { doPasswordReset } from '../../firebase/auth'; // Import the custom password reset function
 import Loader from '../../components/Loader/Loader'; // Import the Loader component
 
 function ForgotPassword() {
@@ -32,11 +32,11 @@ function ForgotPassword() {
     if (validateForm()) {
       setLoading(true); // Show loader
       try {
-        const data = await forgotPassword(email);
+        await doPasswordReset(email); // Call the custom password reset function
         setMessage(t('If the email exists, you will receive a password reset link.'));
         setEmail(''); // Reset the email field after submission
       } catch (error) {
-        setErrors({ api: error.message || 'An error occurred' });
+        setErrors({ api: t(error.message) || 'An error occurred' });
       } finally {
         setLoading(false); // Hide loader
       }
@@ -56,7 +56,7 @@ function ForgotPassword() {
           </p>
         </div>
 
-        {message && <p className="text-center text-green-500">{message}</p>}      
+        {message && <p className="text-center text-green-500">{message}</p>}       {/* Success message*/}
 
         <form className="mt-8 space-y-6" onSubmit={handleForgotPassword} noValidate>
           <div className="space-y-4 rounded-md shadow-sm">
@@ -70,14 +70,11 @@ function ForgotPassword() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={`appearance-none rounded-md relative block w-full px-10 py-3 border ${
-                    errors.email ? 'border-red-500' : 'border-gray-300 border-solid'
-                  } dark:border-gray-700 placeholder-gray-600 dark:placeholder-gray-400 text-gray-900 dark:text-gray-200 bg-white dark:bg-[#222222] focus:outline-none focus:ring-[#D1EC79] focus:border-[#D1EC79] sm:text-sm`}
+                  className={`appearance-none rounded-md relative block w-full px-10 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300 border-solid'} dark:border-gray-700 placeholder-gray-600 dark:placeholder-gray-400 text-gray-900 dark:text-gray-200 bg-white dark:bg-[#222222] focus:outline-none focus:ring-[#D1EC79] focus:border-[#D1EC79] sm:text-sm`}
                   placeholder={t('Email address')}
                 />
-                
               </div>
-              {errors.api && <p className="text-red-500 text-sm my-1">{errors.api}</p>}
+              {errors.api && <p className="text-red-500 text-sm my-1">{errors.api}</p>} {/* API error */}
               {errors.email && <p className="mt-2 text-xs text-red-500">{errors.email}</p>}
             </div>
           </div>

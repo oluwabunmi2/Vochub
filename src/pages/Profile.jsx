@@ -1,52 +1,57 @@
-// src/pages/Profile.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import { FaCamera, FaMedal, FaFileAlt, FaSignInAlt } from 'react-icons/fa';
-import { updateProfilePicture } from '../services/apiService';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 const Profile = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({
-    id: user?.id,
-    name: user?.name,
-    email: user?.email,
-    phone: user?.phone ? user?.phone : 'Phone: Not Available',
-    profilePic: user?.profile_picture || 'https://img.freepik.com/free-vector/user-circles-set_78370-4704.jpg',
+    id: '',
+    name: '',
+    email: '',
+    phone: '',
+    profilePic: 'https://img.freepik.com/free-vector/user-circles-set_78370-4704.jpg?t=st=1729669485~exp=1729673085~hmac=256bf1263f0afebdea40a17214bf66f07345e615f4de7e37901716ceb1887bf3&w=740',
     badges: ['Top Learner', 'Completionist'],
     certificates: [
       { title: 'Certified Baker', date: 'Sep 15, 2024' },
-      { title: 'Resin Craft Mastery', date: 'Aug 22, 2024' },
+      { title: 'Graphic Design Basics', date: 'Aug 22, 2024' },
     ],
-    loginHistory: [
-      { date: 'Oct 20, 2024', device: 'Chrome on Windows 10' },
-      { date: 'Oct 18, 2024', device: 'Firefox on Android' },
-    ],
+    loginHistory: [],
   });
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
   };
 
-  const handleProfilePicUpdate = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      try {
-        const response = await updateProfilePicture(file);
-        
-        if (response.data.success) {
-          // Update the profile picture in local state after a successful upload
-          setUserInfo((prevUserInfo) => ({
-            ...prevUserInfo,
-            profilePic: URL.createObjectURL(file),
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user) {
+        const db = getFirestore();
+        const userDoc = doc(db, 'users', user.uid);
+        const userSnapshot = await getDoc(userDoc);
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data();
+          setUserInfo((prevState) => ({
+            ...prevState,
+            id: user.uid,
+            name: userData.name || user.displayName,
+            email: userData.email || user.email,
+            phone: userData.phone || '',
+            loginHistory: userData.loginHistory || [],
           }));
-          console.log('Profile picture updated successfully');
         }
-      } catch (error) {
-        console.error('Error updating profile picture:', error);
       }
-    }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const handleProfilePicUpdate = (event) => {
+    console.log('Profile pic updated');
   };
 
   return (
@@ -69,15 +74,16 @@ const Profile = () => {
                 <img
                   src={userInfo.profilePic}
                   alt="Profile Pic"
-                  className="object-cover w-20 h-20 rounded-full cursor-pointer"
-                  onClick={() => document.getElementById('profilePicInput').click()} // Trigger file input on click
+                  className="object-cover w-20 h-20 rounded-full"
                 />
-                <input 
-                  id="profilePicInput" 
-                  type="file" 
-                  className="hidden" 
-                  onChange={handleProfilePicUpdate} 
-                />
+                <label className="absolute bottom-0 right-0 bg-[#8cd836] p-2 rounded-full cursor-pointer">
+                  <FaCamera className="text-white" />
+                  <input 
+                    type="file" 
+                    className="hidden" 
+                    onChange={handleProfilePicUpdate} 
+                  />
+                </label>
               </div>
               <div className="ml-6 font-inter">
                 <h2 className="text-lg font-semibold text-gray-800">{userInfo.name}</h2>
@@ -85,7 +91,7 @@ const Profile = () => {
                 <p className="text-gray-500">{userInfo.phone}</p>
               </div>
             </div>
-          </div>  
+          </div>
 
           {/* Badges Section */}
           <div className="p-6 mt-6 bg-white rounded-lg shadow">

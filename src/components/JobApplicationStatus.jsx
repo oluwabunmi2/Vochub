@@ -8,7 +8,7 @@ const JobApplicationStatus = () => {
 
   const applications = [
     { 
-      jobTitle: 'Electrician', 
+      jobTitle: 'Web development', 
       status: 'Under Review', 
       timeline: [
         { step: 'Application Submitted', date: '2024-10-01' },
@@ -17,7 +17,7 @@ const JobApplicationStatus = () => {
       ]
     },
     { 
-      jobTitle: 'Carpenter', 
+      jobTitle: 'Professional stylist', 
       status: 'Accepted', 
       timeline: [
         { step: 'Application Submitted', date: '2024-09-15' },
@@ -26,7 +26,7 @@ const JobApplicationStatus = () => {
       ]
     },
     { 
-      jobTitle: 'Plumber', 
+      jobTitle: 'UI/UX designer', 
       status: 'Rejected', 
       timeline: [
         { step: 'Application Submitted', date: '2024-09-28' },

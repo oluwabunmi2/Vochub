@@ -19,10 +19,10 @@ function Courses() {
   // Example course data
   const courses = [
     {
-      image: 'https://img.freepik.com/free-photo/close-up-thorough-measuring_482257-90427.jpg?t=st=1729594505~exp=1729598105~hmac=ebb4fd46c1a2fea239c215a1bb2174062f33e39a5d5f304e1819ae76e6634c77&w=740',
-      title: 'Tailoring',
+      image: 'https://img.freepik.com/free-photo/programming-background-with-person-working-with-codes-computer_23-2150010138.jpg?t=st=1732137091~exp=1732140691~hmac=1e6970547d414da264184119f6756a84b5006ffc4c98bc1171c12ccfa9650f02&w=900',
+      title: 'Web Development',
       category: 'Development',
-      enrollments: 1200,
+      enrollments: 200,
       authorImg: 'https://img.freepik.com/free-photo/two-african-dressmaker-woman-sews-clothes-sewing-machine-tailor-office-black-seamstress-girls_627829-4508.jpg?t=st=1729594545~exp=1729598145~hmac=c48e592c0c014c1ed6fcbcdb99a95c1d24b9126f6b50f5a3451aa6556e151bd4&w=740',
       authorName: 'John Doe',
       description: 'Learn the basics of frontend development, including HTML, CSS, and JavaScript. By the end of this course, you will be able to build responsive websites.',
@@ -36,7 +36,7 @@ function Courses() {
       image: 'https://img.freepik.com/free-photo/woman-taking-care-her-afro-hair_23-2149259395.jpg?t=st=1729597861~exp=1729601461~hmac=d650fdaf45853f82bc9fe5ddcdfa92eff2df356f994314014cdfec125bf70d01&w=740',
       title: 'Hairdressing and Makeup',
       category: 'Beauty',
-      enrollments: 850,
+      enrollments: 150,
       authorImg: 'https://img.freepik.com/free-photo/stylist-woman-taking-care-her-client-afro-hair_23-2149259373.jpg?t=st=1729597983~exp=1729601583~hmac=94ef368ac138253aee99c3bcbb78465d4774634484c29ffe91eb380e2c1fbe7e&w=360',
       authorName: 'Emily Watson',
       description: 'Learn the art of hairdressing and makeup application, covering hairstyling techniques, beauty treatments, and makeup artistry for various occasions.',
@@ -48,25 +48,25 @@ function Courses() {
       ]
     },    
     {
-      image: 'https://img.freepik.com/premium-photo/high-angle-black-male-craftsman-fixing-furniture-workshop_236854-53546.jpg?w=740',
-      title: 'Wood & Furniture Making',
+      image: 'https://img.freepik.com/free-photo/close-up-thorough-measuring_482257-90427.jpg?t=st=1729594505~exp=1729598105~hmac=ebb4fd46c1a2fea239c215a1bb2174062f33e39a5d5f304e1819ae76e6634c77&w=740',
+      title: 'Tailoring',
       category: 'Craftsmanship',
-      enrollments: 540,
+      enrollments: 120,
       authorImg: '/author3.jpg',
       authorName: 'Michael Brown',
-      description: 'Gain hands-on skills in woodworking and furniture making, including wood selection, cutting, assembly, and finishing techniques to create functional and aesthetic furniture.',
+      description: 'Gain practical skills in tailoring, covering fabric selection, cutting, sewing, and finishing techniques to design and create functional, stylish, and customized clothing items.',
       learningOutcomes: [
-        'Understand the basics of wood selection and preparation',
+        'Understand the basics Tailoring',
         'Learn various cutting and assembly techniques',
-        'Design and build simple furniture pieces',
-        'Master finishing techniques for high-quality furniture'
+        'Cut and sew Elegant outfits',
+        'Master finishing techniques for high-quality designs'
       ]
     },
     {
       image: 'https://img.freepik.com/free-photo/medium-shot-artisan-doing-woodcutting_23-2150104745.jpg?t=st=1729598273~exp=1729601873~hmac=13c6a69ce5c00f2eaa176748bbab68eea78fa799d777ce9b907cb4844d14d167&w=740',
       title: 'Bag & Shoe Making',
       category: 'Fashion & Accessories',
-      enrollments: 920,
+      enrollments: 180,
       authorImg: '/author1.jpg',
       authorName: 'Anna Stewart',
       description: 'Learn the skills of designing and crafting both bags and shoes, covering materials, sewing techniques, and pattern creation to produce custom-made accessories.',
@@ -78,18 +78,18 @@ function Courses() {
       ]
     },
     {
-      image: 'https://img.freepik.com/free-photo/stained-brush-with-paint-bowl_23-2148002411.jpg?t=st=1729598318~exp=1729601918~hmac=867e6db43389a1805fcc2f405a5be2d279716edbc11cb8d33b409a5fe88d21c0&w=740',
-      title: 'Resin Craft',
-      category: 'Crafts & Jewelry',
-      enrollments: 750,
+      image: 'https://img.freepik.com/free-photo/ui-ux-representations-with-smart-watch_23-2150201853.jpg?t=st=1732138673~exp=1732142273~hmac=abf3f6e35cc3d3fd82bd4a6d90cc145f99d7eac887086883ff8afc0dd5d1b45a&w=900',
+      title: 'UI/UX Design',
+      category: 'Design',
+      enrollments: 250,
       authorImg: '/author3.jpg',
       authorName: 'David Lee',
-      description: 'Explore the art of resin crafting, from making jewelry to home décor. This course covers resin mixing, mold creation, and finishing techniques to make beautiful resin pieces.',
+      description: 'Discover the fundamentals of UI/UX design, from wireframing to prototyping. This course covers user research, interface design, and usability testing to create engaging and user-friendly digital experiences.',
       learningOutcomes: [
-        'Understand resin mixing and curing processes',
-        'Learn to create molds for jewelry and other crafts',
-        'Master resin pouring and coloring techniques',
-        'Develop skills for finishing and polishing resin products'
+        'Understand the core principles of user interface (UI) and user experience (UX) design, including typography, color theory, and layout to create visually appealing and functional designs.',
+        'Gain skills in conducting user research and creating personas to design interfaces that meet the needs and expectations of diverse user groups.',
+        'Learn to use industry-standard tools to create wireframes and interactive prototypes, ensuring efficient design iteration and testing.',
+        'Learn to use industry-standard tools to create wireframes and interactive prototypes, ensuring efficient design iteration and testing.'
       ]
     },
     {
@@ -140,11 +140,11 @@ function Courses() {
       <div className=" flex-1 lg:ml-[200px] font-inter">
         <Navbar />
         <div className="p-6">
-          <h1 className="text-2xl font-semibold mb-6 text-gray-800">Courses</h1>
+          <h1 className="mb-6 text-2xl font-semibold text-gray-800">Courses</h1>
           
           <SearchBar onSearch={setSearchTerm}  onCategoryChange={setSelectedCategory}  />
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-6">
+          <div className="grid grid-cols-1 gap-2 mt-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredCourses.map((course, index) => (
               <CourseCard 
                 key={index} 

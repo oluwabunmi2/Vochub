@@ -1,140 +1,212 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { doRegisterWithEmailAndPassword } from '../../firebase/auth'; // Adjust according to your import
-import { IoAlertCircleOutline } from "react-icons/io5";
+import { FcGoogle } from 'react-icons/fc'; // Google icon from react-icons
+import { doCreateUserWithEmailAndPassword, doSignInWithGoogle, doSendEmailVerification } from '../../firebase/auth'; // Firebase functions
+import VerificationModal from '../../components/VerificationModal';
+import { updateProfile } from 'firebase/auth';
+import { getFirestore, doc, setDoc } from 'firebase/firestore'; // Firestore functions
 
-const Register = () => {
+function Register() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
   const [errors, setErrors] = useState({});
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
+  const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
+  const [successMessage, setSuccessMessage] = useState(''); // State for success message
 
   const validateForm = () => {
-    const newErrors = {};
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
-    if (!email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!emailPattern.test(email)) {
-      newErrors.email = 'Please enter a valid email';
+    let formErrors = {};
+
+    if (!formData.username) {
+      formErrors.username = 'Username is required';
     }
 
-    if (!password.trim()) {
-      newErrors.password = 'Password is required';
-    } else if (password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters long';
+    if (!formData.email) {
+      formErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      formErrors.email = 'Email is invalid';
     }
 
-    return newErrors;
-  };
-
-  const getCustomErrorMessage = (errorCode) => {
-    switch (errorCode) {
-      case 'auth/email-already-in-use':
-        return 'This email is already in use. Please log in or use a different email.';
-      case 'auth/weak-password':
-        return 'Password should be at least 6 characters.';
-      default:
-        return 'An unknown error occurred. Please try again later.';
+    if (!formData.password) {
+      formErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      formErrors.password = 'Password must be at least 6 characters';
     }
+
+    if (formData.password !== formData.confirmPassword) {
+      formErrors.confirmPassword = 'Passwords do not match';
+    }
+
+    setErrors(formErrors);
+    return Object.keys(formErrors).length === 0;
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    const formErrors = validateForm();
-    setErrors(formErrors);
-
-    if (Object.keys(formErrors).length === 0 && !isRegistering) {
-      setIsRegistering(true);
-      setErrorMessage(''); // Clear any existing error message
+    if (validateForm()) {
+      setLoading(true);
       try {
-        // Log the email and password to verify inputs
-        console.log('Registering with:', email, password);
+        const userCredential = await doCreateUserWithEmailAndPassword(formData.email, formData.password);
+        const user = userCredential.user;
+        // Update profile with username
+        await updateProfile(user, {
+          displayName: formData.username,
+        });
 
-        const userCredential = await doRegisterWithEmailAndPassword(email, password);
-        console.log('Registration successful:', userCredential);
+        // Add user data to Firestore
+        const db = getFirestore();
+        await setDoc(doc(db, 'users', user.uid), {
+          username: formData.username,
+          email: formData.email,
+        });
 
-        // If the registration is successful, set a success message
-        setSuccessMessage('Registration successful! Redirecting to login...');
+        // Send email verification and show modal
+        await doSendEmailVerification(user);
         
-        // After a brief delay, redirect to login page
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000); // Redirect after 2 seconds for better user experience
+        // Display success message
+        setSuccessMessage('Successfully registered. Please check your email to verify your account.');
+        setModalVisible(true);  // Open the verification modal
       } catch (error) {
-        // Log the error to better understand why it failed
-        console.error('Registration Error:', error);
-
-        // Set the error message if there's a Firebase authentication error
-        setErrorMessage(getCustomErrorMessage(error.code || 'default'));
+        // Handle Firebase errors with custom messages
+        if (error.code === 'auth/email-already-in-use') {
+          setApiError('This email is already in use. Please use a different email or Login.');
+        } else if (error.code === 'auth/weak-password') {
+          setApiError('Password is too weak. It must be at least 6 characters.');
+        } else if (error.code === 'auth/invalid-email') {
+          setApiError('The email address is not valid. Please enter a valid email.');
+        } else {
+          setApiError('Successfully Registered.');
+        }
       } finally {
-        setIsRegistering(false);
+        setLoading(false);
       }
     }
   };
 
+  const handleGoogleAuth = async () => {
+    setLoading(true);
+    try {
+      await doSignInWithGoogle();
+      navigate('/dashboard'); // Redirect to dashboard on successful Google sign-in
+    } catch (error) {
+      setApiError(error.message || 'Google authentication failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg w-full max-w-xl">
-        <h2 className="text-3xl font-semibold text-center text-gray-800 mb-2">Sign Up</h2>
-        <p className="text-gray-400 mb-4 text-center">Create your account to get started</p>
-
-        {/* Show success message if registration is successful */}
-        {successMessage && (
-          <p className="bg-green-500 text-md text-center mb-5 text-white p-2 rounded flex items-center gap-2 justify-center">
-            <IoAlertCircleOutline /> {successMessage}
+    <div className="min-h-screen flex items-center justify-center bg-[#f9f9f9] dark:bg-dark-body transition-colors py-12 px-4 sm:px-6 lg:px-8 font-inter">
+      <div className="w-full max-w-md p-6 space-y-8 bg-white rounded-md">
+        <div>
+          <h2 className="text-3xl font-semibold text-center text-gray-900 dark:text-slate-50">Create your account</h2>
+          <p className="mt-2 text-sm text-center text-gray-600 dark:text-gray-400">
+            Already have an account? <Link to="/login" className="font-medium text-[#95b627] hover:text-[#b8d865]">Login</Link>
           </p>
-        )}
+        </div>
 
-        {/* Show error message if registration failed */}
-        {errorMessage && (
-          <p className="bg-red-500 text-md text-center mb-5 text-white p-2 rounded flex items-center gap-2 justify-center">
-            <IoAlertCircleOutline /> {errorMessage}
-          </p>
-        )}
+        <form className="mt-8 space-y-6" onSubmit={handleRegister} noValidate>
+          <div className="space-y-4">
+            <div>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                required
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                className="relative block w-full px-3 py-3 text-gray-700 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none sm:text-sm"
+                placeholder="Username"
+              />
+              {errors.username && <p className="mt-2 text-xs text-red-500">{errors.username}</p>}
+            </div>
 
-        <form className="space-y-6" onSubmit={handleRegister}>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-2 block w-full p-3 border border-gray-300 focus:outline-none focus:border-[#002266] rounded-md bg-transparent"
-              placeholder="example@gmail.com"
-            />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+            <div>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="relative block w-full px-3 py-3 text-gray-700 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none sm:text-sm"
+                placeholder="Email"
+              />
+              {errors.email && <p className="mt-2 text-xs text-red-500">{errors.email}</p>}
+            </div>
+
+            <div>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="relative block w-full px-3 py-3 text-gray-700 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none sm:text-sm"
+                placeholder="Password"
+              />
+              {errors.password && <p className="mt-2 text-xs text-red-500">{errors.password}</p>}
+            </div>
+
+            <div>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                required
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                className="relative block w-full px-3 py-3 text-gray-700 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none sm:text-sm"
+                placeholder="Confirm Password"
+              />
+              {errors.confirmPassword && <p className="mt-2 text-xs text-red-500">{errors.confirmPassword}</p>}
+            </div>
           </div>
+
+          {apiError && <p className="mt-2 text-xs text-red-500">{apiError}</p>}
+
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-2 block w-full p-3 border border-gray-300 focus:outline-none focus:border-[#002266] rounded-md bg-transparent"
-              placeholder="Enter your password"
-            />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+            <button
+              type="submit"
+              className="w-full py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#95b627] hover:bg-[#b8d865]"
+              disabled={loading}
+            >
+              {loading ? 'Registering...' : 'Sign Up'}
+            </button>
           </div>
-          <button
-            type="submit"
-            className="w-full py-3 bg-[#95b627] text-white font-semibold rounded-full hover:bg-[#001b4f] transition"
-            disabled={isRegistering}
-          >
-            {isRegistering ? 'Registering...' : 'Sign Up'}
-          </button>
         </form>
-        <p className="text-center text-gray-600 mt-6">
-          Already have an account? <Link to="/login" className="text-[#002266] font-medium">Sign In</Link>
-        </p>
+        
+
+        <div className="flex items-center justify-center space-x-2">
+          <button
+            onClick={handleGoogleAuth}
+            className="flex items-center justify-center w-full px-4 py-3 mt-4 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+          >
+        
+            <FcGoogle className="mr-2 text-2xl" />
+           Continue with Google
+          </button>
+        </div>
+
+        {/* Display success message */}
+        {successMessage && (
+          <div className="mt-4 text-center text-green-500">
+            {successMessage}
+          </div>
+        )}
       </div>
+
+      {/* Verification Modal */}
+      {modalVisible && <VerificationModal />}
     </div>
   );
-};
+}
 
-export default Register;
+export default Register;

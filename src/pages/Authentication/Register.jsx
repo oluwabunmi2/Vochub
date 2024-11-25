@@ -49,10 +49,19 @@ const Register = () => {
     if (Object.keys(formErrors).length === 0 && !isRegistering) {
       setIsRegistering(true);
       try {
-        await doRegisterWithEmailAndPassword(email, password);
+        // Log the email and password to verify inputs
+        console.log('Registering with:', email, password);
+
+        const userCredential = await doRegisterWithEmailAndPassword(email, password);
+        console.log('Registration successful:', userCredential);
+
+        // Navigate to the dashboard upon successful registration
         navigate('/dashboard');
       } catch (error) {
+        // Log the error to better understand why it failed
         console.error('Registration Error:', error);
+
+        // Set the error message if there's a Firebase authentication error
         setErrorMessage(getCustomErrorMessage(error.code || 'default'));
       } finally {
         setIsRegistering(false);

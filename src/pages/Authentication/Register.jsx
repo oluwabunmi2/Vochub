@@ -170,7 +170,7 @@ function Register() {
             </div>
           </div>
 
-          {apiError && <p className="mt-2 text-xs text-green-500">{apiError}</p>}
+          {apiError && <p className="mt-2 text-xs text-green-600">{apiError}</p>}
 
           <div>
             <button

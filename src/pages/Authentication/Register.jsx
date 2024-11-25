@@ -138,7 +138,7 @@ function Register() {
                 className="relative block w-full px-3 py-3 text-gray-700 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none sm:text-sm"
                 placeholder="Email"
               />
-              {errors.email && <p className="mt-2 text-xs text-red-500">{errors.email}</p>}
+              {errors.email && <p className="mt-2 text-xs text-green-500">{errors.email}</p>}
             </div>
 
             <div>

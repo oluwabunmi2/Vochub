@@ -46,7 +46,7 @@ const Login = () => {
         return 'Incorrect password. Please try again.';
       case 'auth/too-many-requests':
         return 'Too many attempts. Please try again later.';
-      case 'auth/invalid-credential':
+      case 'auth/invalid-credential': // Handle invalid credential error
         return 'Invalid credentials. Please check your email and password.';
       default:
         return 'An unknown error occurred. Please try again later.';
@@ -93,69 +93,67 @@ const Login = () => {
     if (userLoggedIn) {
       navigate('/dashboard');
     }
-  }, [userLoggedIn, navigate]);
+  }, [userLoggedIn, navigate]); // This effect runs whenever userLoggedIn changes
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg w-full max-w-xl">
-        <h2 className="text-3xl font-semibold text-center text-gray-800 mb-2">Sign In</h2>
-        <p className="text-gray-400 mb-4 text-center">Welcome back, sign into your account</p>
-        {errorMessage && (
-          <p className="bg-red-500 text-md text-center mb-5 text-white p-2 rounded flex items-center gap-2 justify-center">
-            <IoAlertCircleOutline /> {errorMessage}
-          </p>
-        )}
-        <button
-          type="button"
-          className="flex items-center justify-center px-4 py-3 bg-[#fff] text-[#002266] border gap-2 rounded-full font-medium hover:bg-[#002266] hover:text-white mx-auto transition mb-4"
-          onClick={onGoogleSignIn}
-        >
-          <FcGoogle size={24} />
-          Continue with Google
-        </button>
-        <p className="text-sm font-medium text-center m-4 text-gray-400">Or</p>
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-2 block w-full p-3 border border-gray-300  focus:outline-none focus:border-[#002266] rounded-md bg-transparent"
-              placeholder="example@gmail.com"
-            />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-2 block w-full p-3 border border-gray-300  focus:outline-none focus:border-[#002266] rounded-md bg-transparent"
-              placeholder="Enter your password"
-            />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
-          </div>
-          <Link to="/forgot-password" className="text-right text-sm text-[#002266] font-semibold mt-4 flex justify-end">
-            Forgot Password?
-          </Link>
+    <div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="bg-white p-8 rounded-lg w-full max-w-xl">
+          <h2 className="text-3xl font-semibold text-center text-gray-800 mb-2">Sign In</h2>
+          <p className="text-gray-400 mb-4 text-center">Welcome back, sign into your account</p>
+          {errorMessage && <p className="bg-red-500 text-md text-center mb-5 text-white p-2 rounded flex items-center gap-2 justify-center"> <IoAlertCircleOutline /> {errorMessage}</p>}
           <button
-            type="submit"
-            className="w-full py-3 bg-[#95b627] text-white font-semibold rounded-full hover:bg-[#001b4f] transition"
-            disabled={isSigningIn}
+            type="button"
+            className="flex items-center justify-center px-4 py-3 bg-[#fff] text-[#002266] border gap-2 rounded-full font-medium hover:bg-[#002266] hover:text-white mx-auto transition mb-4"
+            onClick={onGoogleSignIn}
           >
-            {isSigningIn ? 'Signing In...' : 'Sign In'}
+            <FcGoogle size={24} />
+            Continue with Google
           </button>
-        </form>
-        <p className="text-center text-gray-600 mt-6">
-          Don't have an account? <Link to="/register" className="text-[#002266] font-medium">Sign Up</Link>
-        </p>
+          <p className="text-sm font-medium text-center m-4 text-gray-400">Or</p>
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-2 block w-full p-3 border border-gray-300  focus:outline-none focus:border-[#002266] rounded-md bg-transparent"
+                placeholder="example@gmail.com"
+              />
+              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-2 block w-full p-3 border border-gray-300  focus:outline-none focus:border-[#002266] rounded-md bg-transparent"
+                placeholder="Enter your password"
+              />
+              {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+            </div>
+            <Link to="/forgot-password" className="text-right text-sm text-[#002266] font-semibold mt-4 flex justify-end">
+              Forgot Password?
+            </Link>
+            <button
+              type="submit"
+              className="w-full py-3 bg-[#95b627] text-white font-semibold rounded-full hover:bg-[#001b4f] transition"
+              disabled={isSigningIn}
+            >
+              {isSigningIn ? 'Signing In...' : 'Sign In'}
+            </button>
+          </form>
+          <p className="text-center text-gray-600 mt-6">
+            Don't have an account? <Link to="/register" className="text-[#002266] font-medium">Sign Up</Link>
+          </p>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Login;
